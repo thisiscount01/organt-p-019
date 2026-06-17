@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대기질 대시보드 — 한국 주요 도시 AI 분석</title>
+  <link rel="stylesheet" href="/tokens.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- ── 헤더 ─────────────────────────────────────────── -->
+    <header class="site-header">
+      <div class="header-content">
+        <div class="header-brand">
+          <span class="header-icon" aria-hidden="true">🌬</span>
+          <div>
+            <h1 class="header-title">대기질 대시보드</h1>
+            <p class="header-sub">한국 주요 10개 도시 실시간 AI 분석</p>
+          </div>
+        </div>
+        <div class="header-meta">
+          <span class="update-time" id="updateTime">업데이트 중…</span>
+          <button class="refresh-btn" id="refreshBtn" aria-label="새로고침" title="새로고침">↻</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── 도시 네비게이션 ─────────────────────────────── -->
+    <nav class="city-nav" aria-label="도시 선택">
+      <div class="city-nav-inner" id="cityNav">
+        <!-- JS가 .city-btn 생성 -->
+      </div>
+    </nav>
+
+    <!-- ── 메인 콘텐츠 ────────────────────────────────── -->
+    <main class="main-content" id="mainContent">
+
+      <!-- 로딩 -->
+      <div class="loading-state" id="loadingState">
+        <div class="spinner" role="status" aria-label="불러오는 중"></div>
+        <p>데이터를 불러오는 중…</p>
+      </div>
+
+      <!-- 에러 -->
+      <div class="error-state hidden" id="errorState">
+        <span aria-hidden="true" style="font-size:2rem">⚠</span>
+        <p>데이터를 불러올 수 없습니다.</p>
+      </div>
+
+      <!-- 대시보드 -->
+      <div class="dashboard hidden" id="dashboard">
+
+        <!-- 상단 2컬럼: 현재 PM2.5 + AI 판정 -->
+        <div class="dashboard-row dashboard-row--primary">
+
+          <!-- 현재 PM2.5 카드 -->
+          <div class="card card--current" id="currentCard" data-grade="">
+            <div class="card-glow"></div>
+            <div class="card-header">
+              <span class="card-label">현재 PM2.5</span>
+              <span class="grade-badge" id="gradeBadge">—</span>
+            </div>
+            <div class="card-body">
+              <div class="gauge-wrap">
+                <div class="gauge" role="img" aria-labelledby="gaugeValue">
+                  <svg class="gauge-svg" viewBox="0 0 120 120" aria-hidden="true">
+                    <circle class="gauge-track" cx="60" cy="60" r="50" />
+                    <circle class="gauge-fill" id="gaugeFill" cx="60" cy="60" r="50" />
+                  </svg>
+                  <div class="gauge-center">
+                    <span class="gauge-value" id="gaugeValue">—</span>
+                    <span class="gauge-unit">µg/m³</span>
+                  </div>
+                </div>
+              </div>
+              <div class="current-meta">
+                <p class="current-city-name" id="currentCityName">도시를 선택하세요</p>
+                <p class="current-grade-label" id="currentGradeLabel">—</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI 판정 카드 -->
+          <div class="card card--verdict" id="verdictCard" data-grade="">
+            <div class="card-glow"></div>
+            <div class="card-header">
+              <span class="card-label">AI 외출 판정</span>
+            </div>
+            <div class="card-body">
+              <div class="verdict-icon" id="verdictIcon" aria-hidden="true">🤔</div>
+              <p class="verdict-label" id="verdictLabel">분석 대기 중</p>
+              <p class="verdict-message" id="verdictMessage">도시를 선택하면 AI가 외출 여부를 판단합니다.</p>
+              <p class="verdict-detail" id="verdictDetail"></p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- AI 배너 -->
+        <div class="ai-banner" id="aiBanner">
+          <span class="ai-banner-icon" aria-hidden="true">🤖</span>
+          <span class="ai-banner-text" id="aiBannerText">AI 분석 결과를 기다리는 중…</span>
+        </div>
+
+        <!-- 24h 예측 바 차트 -->
+        <div class="card" id="forecastCard">
+          <div class="card-glow"></div>
+          <div class="card-header">
+            <span class="card-label">24시간 PM2.5 예측</span>
+            <span class="tomorrow-badge hidden" id="tomorrowBadge">내일</span>
+          </div>
+          <div class="card-body">
+            <div class="forecast-area">
+              <div class="forecast-chart" id="forecastChart">
+                <!-- JS가 .forecast-bar-wrap 생성 -->
+              </div>
+            </div>
+            <div class="forecast-legend" id="forecastLegend">
+              <div class="legend-item" data-grade="good">좋음</div>
+              <div class="legend-item" data-grade="moderate">보통</div>
+              <div class="legend-item" data-grade="bad">나쁨</div>
+              <div class="legend-item" data-grade="very_bad">매우나쁨</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 오염물질 그리드 -->
+        <div class="card" id="pollutantCard">
+          <div class="card-glow"></div>
+          <div class="card-header">
+            <span class="card-label">주요 오염물질</span>
+          </div>
+          <div class="card-body">
+            <div class="pollutant-grid">
+              <div class="pollutant-item">
+                <span class="pollutant-name">PM10</span>
+                <span class="pollutant-value" id="pm10Val">—</span>
+                <span class="pollutant-unit">µg/m³</span>
+              </div>
+              <div class="pollutant-item">
+                <span class="pollutant-name">O₃</span>
+                <span class="pollutant-value" id="o3Val">—</span>
+                <span class="pollutant-unit">ppb</span>
+              </div>
+              <div class="pollutant-item">
+                <span class="pollutant-name">NO₂</span>
+                <span class="pollutant-value" id="no2Val">—</span>
+                <span class="pollutant-unit">ppb</span>
+              </div>
+              <div class="pollutant-item">
+                <span class="pollutant-name">AQI</span>
+                <span class="pollutant-value" id="aqiVal">—</span>
+                <span class="pollutant-unit">지수</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.dashboard -->
+    </main>
+
+    <!-- ── 푸터 ─────────────────────────────────────────── -->
+    <footer class="site-footer">
+      <p>데이터 출처: AQICN 공공 대기질 API &nbsp;|&nbsp; AI 분석: 서버 판정 모델 &nbsp;|&nbsp; PM2.5 기준 WHO 가이드라인</p>
+    </footer>
+
+  </div><!-- /.app-shell -->
+
+  <script src="/app.js"></script>
+</body>
+</html>

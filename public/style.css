@@ -1,0 +1,803 @@
+/* ============================================================
+   style.css — 대기질 대시보드 레이아웃 & 컴포넌트
+   ────────────────────────────────────────────────────────────
+   모든 색상은 tokens.css 변수만 사용.
+   하드코딩된 색상 리터럴 없음.
+   lint: grep -E '#[0-9a-fA-F]{3,8}(?=[^;])|rgba?\(|hsl[a]?\(' style.css
+   ============================================================ */
+
+
+/* ── 0. Reset & Base ──────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  height: 100%;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont,
+               'Noto Sans KR', 'Apple SD Gothic Neo', system-ui, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+
+/* ── 1. App Shell ─────────────────────────────────────────── */
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+/* ── 2. Site Header ───────────────────────────────────────── */
+
+.site-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--bg-card-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 24px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.header-sub {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.update-time {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--bg-card-border);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  font-size: 1.2rem;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.refresh-btn:hover {
+  background: var(--bg-card-border);
+}
+
+.refresh-btn:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.refresh-btn.spinning {
+  animation: spin 0.75s linear infinite;
+}
+
+
+/* ── 3. City Navigation ───────────────────────────────────── */
+
+.city-nav {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--bg-card-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.city-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.city-nav-inner {
+  display: flex;
+  gap: 8px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  min-width: max-content;
+}
+
+.city-btn {
+  padding: 7px 18px;
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--bg-card-border);
+  color: var(--text-secondary);
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  min-height: 36px;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.city-btn:hover:not(.active) {
+  background: var(--bg-card-border);
+  color: var(--text-primary);
+}
+
+.city-btn:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+/* 활성 도시 — data-grade 토큰으로 테마 자동 전환 */
+.city-btn.active {
+  background: var(--g-surface, var(--bg-card-elevated));
+  border-color: var(--g-border, var(--bg-card-border));
+  color: var(--g-text, var(--text-primary));
+  font-weight: 700;
+}
+
+
+/* ── 4. Main Content ──────────────────────────────────────── */
+
+.main-content {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+
+/* ── 5. States: Loading & Error ───────────────────────────── */
+
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 24px;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.error-state {
+  color: var(--grade-bad-text);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--bg-card-border);
+  border-top-color: var(--text-secondary);
+  border-radius: 50%;
+  animation: spin 0.85s linear infinite;
+}
+
+
+/* ── 6. Utility ───────────────────────────────────────────── */
+
+.hidden {
+  display: none !important;
+}
+
+
+/* ── 7. Dashboard Grid ────────────────────────────────────── */
+
+.dashboard {
+  display: grid;
+  gap: 16px;
+}
+
+.dashboard-row {
+  display: grid;
+  gap: 16px;
+}
+
+/* 상단 2컬럼 */
+.dashboard-row--primary {
+  grid-template-columns: 1fr 1fr;
+}
+
+
+/* ── 8. Card Base ─────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  background: var(--g-surface, var(--bg-card));
+  border: 1px solid var(--g-border, var(--bg-card-border));
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base);
+}
+
+/* data-grade 없는 카드는 중립 배경 */
+.card:not([data-grade]) {
+  background: var(--bg-card);
+  border-color: var(--bg-card-border);
+}
+
+.card-glow {
+  position: absolute;
+  inset: 0;
+  background: var(--g-glow, none);
+  pointer-events: none;
+  border-radius: inherit;
+  transition: background var(--transition-base);
+}
+
+.card-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 20px 0;
+}
+
+.card-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--g-text-dim, var(--text-secondary));
+  transition: color var(--transition-base);
+}
+
+/* data-grade 없는 카드의 label은 text-secondary 고정 */
+.card:not([data-grade]) .card-label {
+  color: var(--text-secondary);
+}
+
+.card-body {
+  position: relative;
+  z-index: 1;
+  padding: 16px 20px 20px;
+}
+
+
+/* ── 9. Grade Badge ───────────────────────────────────────── */
+
+.grade-badge {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--g-surface-dim, var(--bg-card-elevated));
+  border: 1px solid var(--g-border, var(--bg-card-border));
+  color: var(--g-primary, var(--text-secondary));
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base);
+}
+
+
+/* ── 10. PM2.5 Circular Gauge ─────────────────────────────── */
+/*       SVG: cx=60 cy=60 r=50, viewBox="0 0 120 120"         */
+/*       circumference ≈ 2π × 50 ≈ 314                        */
+/*       CSS rotate(-90deg): 12시 방향 시작점                   */
+
+.gauge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.gauge {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  flex-shrink: 0;
+}
+
+.gauge-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gauge-track {
+  fill: none;
+  stroke: var(--g-surface-dim, var(--bg-card-elevated));
+  stroke-width: 10;
+  transition: stroke var(--transition-base);
+}
+
+.gauge-fill {
+  fill: none;
+  stroke: var(--g-primary, var(--text-tertiary));
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 314;
+  stroke-dashoffset: 314; /* JS가 인라인으로 업데이트 */
+  transition:
+    stroke-dashoffset var(--transition-slow),
+    stroke var(--transition-base);
+}
+
+.gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.gauge-value {
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--g-text, var(--text-primary));
+  transition: color var(--transition-base);
+}
+
+.gauge-unit {
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  color: var(--g-text-dim, var(--text-tertiary));
+  transition: color var(--transition-base);
+}
+
+
+/* ── 11. Current Card Meta ────────────────────────────────── */
+
+.current-meta {
+  text-align: center;
+}
+
+.current-city-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--g-text, var(--text-primary));
+  margin-bottom: 4px;
+  transition: color var(--transition-base);
+}
+
+.current-grade-label {
+  font-size: 0.85rem;
+  color: var(--g-text-dim, var(--text-secondary));
+  transition: color var(--transition-base);
+}
+
+
+/* ── 12. Verdict Card ─────────────────────────────────────── */
+
+.card--verdict .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding-top: 20px;
+}
+
+.verdict-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  /* grade primary를 glow 색으로 사용 (토큰) */
+  filter: drop-shadow(0 2px 10px var(--g-primary, transparent));
+  transition: filter var(--transition-base);
+}
+
+.verdict-label {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--g-text, var(--text-primary));
+  transition: color var(--transition-base);
+}
+
+.verdict-message {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--g-text, var(--text-primary));
+  transition: color var(--transition-base);
+}
+
+.verdict-detail {
+  font-size: 0.77rem;
+  line-height: 1.55;
+  color: var(--g-text-dim, var(--text-secondary));
+  transition: color var(--transition-base);
+}
+
+
+/* ── 13. AI Banner ────────────────────────────────────────── */
+
+.ai-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+}
+
+.ai-banner-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.ai-banner-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+
+/* ── 14. Forecast Area ─────────────────────────────────────── */
+/*       height: 120px (desktop) — JS sets bar px heights      */
+
+.forecast-area {
+  height: 120px;
+  overflow: hidden;
+}
+
+.forecast-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  height: 100%;
+  padding: 0 2px;
+}
+
+.forecast-empty {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
+}
+
+/* 각 시간대 컬럼: val → bar → hour 순서, bottom-align */
+.forecast-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;  /* 바가 아래에서 위로 자람 */
+  height: 100%;
+  gap: 3px;
+}
+
+/* 바 색상: --grade-*-primary 직접 참조 (cascade 우선순위 보장) */
+.forecast-bar {
+  width: 100%;
+  max-width: 28px;
+  min-height: 4px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  /* height: JS 인라인 style로 설정 */
+  background: var(--status-unavailable-primary); /* 기본값: 중립 */
+  transition:
+    height var(--transition-slow),
+    background var(--transition-base);
+}
+
+.forecast-bar[data-grade="good"]     { background: var(--grade-good-primary); }
+.forecast-bar[data-grade="moderate"] { background: var(--grade-moderate-primary); }
+.forecast-bar[data-grade="bad"]      { background: var(--grade-bad-primary); }
+.forecast-bar[data-grade="very_bad"] { background: var(--grade-very-bad-primary); }
+.forecast-bar[data-grade="unavailable"],
+.forecast-bar[data-grade=""]         { background: var(--status-unavailable-primary); }
+
+.forecast-val {
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--text-tertiary);
+}
+
+.forecast-hour {
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-tertiary);
+}
+
+/* 예측 범례 */
+.forecast-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.legend-item::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.legend-item[data-grade="good"]::before     { background: var(--grade-good-primary); }
+.legend-item[data-grade="moderate"]::before { background: var(--grade-moderate-primary); }
+.legend-item[data-grade="bad"]::before      { background: var(--grade-bad-primary); }
+.legend-item[data-grade="very_bad"]::before { background: var(--grade-very-bad-primary); }
+
+/* 내일 배지 */
+.tomorrow-badge {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  color: var(--grade-moderate-text);
+  background: var(--grade-moderate-surface);
+  border: 1px solid var(--grade-moderate-border);
+}
+
+
+/* ── 15. Pollutant Grid ───────────────────────────────────── */
+
+.pollutant-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.pollutant-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--bg-card-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.pollutant-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pollutant-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.pollutant-unit {
+  font-size: 0.62rem;
+  color: var(--text-tertiary);
+}
+
+
+/* ── 16. Site Footer ──────────────────────────────────────── */
+
+.site-footer {
+  background: var(--bg-card);
+  border-top: 1px solid var(--bg-card-border);
+  padding: 12px 24px;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+
+/* ── 17. Responsive — Mobile ≤430px ──────────────────────── */
+
+@media (max-width: 430px) {
+
+  .header-content {
+    padding: 12px 16px;
+  }
+
+  .header-title {
+    font-size: 0.95rem;
+  }
+
+  .header-sub {
+    display: none;
+  }
+
+  .city-nav-inner {
+    padding: 8px 16px;
+  }
+
+  .main-content {
+    padding: 14px;
+  }
+
+  /* 2컬럼 → 1컬럼 */
+  .dashboard-row--primary {
+    grid-template-columns: 1fr;
+  }
+
+  /* 게이지 소형화 */
+  .gauge {
+    width: 124px;
+    height: 124px;
+  }
+
+  .gauge-value {
+    font-size: 1.55rem;
+  }
+
+  .verdict-icon {
+    font-size: 2.4rem;
+  }
+
+  .verdict-label {
+    font-size: 1rem;
+  }
+
+  /* 예측 바 높이 축소 */
+  .forecast-area {
+    height: 80px;
+  }
+
+  .forecast-bar {
+    max-width: 22px;
+  }
+
+  .forecast-val {
+    font-size: 0.56rem;
+  }
+
+  .forecast-hour {
+    font-size: 0.52rem;
+  }
+
+  /* 오염물질 4→2컬럼 */
+  .pollutant-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-header {
+    padding: 14px 16px 0;
+  }
+
+  .card-body {
+    padding: 14px 16px 16px;
+  }
+
+  .forecast-chart {
+    gap: 3px;
+  }
+
+  .forecast-legend {
+    gap: 10px;
+  }
+
+  .site-footer {
+    padding: 10px 16px;
+  }
+}
+
+
+/* ── 18. Responsive — Tablet 431–768px ───────────────────── */
+
+@media (min-width: 431px) and (max-width: 768px) {
+
+  .main-content {
+    padding: 20px;
+  }
+
+  /* 오염물질 4→2컬럼 */
+  .pollutant-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* ── 19. Hover Effects (포인터 기기만) ───────────────────── */
+
+@media (hover: hover) {
+  .card {
+    transition:
+      background var(--transition-base),
+      border-color var(--transition-base),
+      transform var(--transition-fast);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  .city-btn {
+    transition:
+      background var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .city-btn:hover:not(.active) {
+    transform: translateY(-1px);
+  }
+}

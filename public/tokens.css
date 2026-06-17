@@ -1,0 +1,138 @@
+:root {
+
+  /* ── 페이지 배경  (160deg: 네이비→청보라, 야간 대기권 연상) ── */
+  --bg-page:      oklch(0.12 0.022 255);
+  --bg-page-to:   oklch(0.17 0.028 268);
+  --bg-gradient:  linear-gradient(160deg, var(--bg-page) 0%, var(--bg-page-to) 100%);
+
+  /* ── 카드 베이스 (중립) ────────────────────────────────────── */
+  --bg-card:          oklch(0.19 0.018 260);
+  --bg-card-elevated: oklch(0.24 0.020 258);
+  --bg-card-border:   oklch(0.32 0.022 260);
+
+  /* ── 기본 텍스트 ─────────────────────────────────────────── */
+  --text-primary:   oklch(0.93 0.010 260);
+  --text-secondary: oklch(0.65 0.015 260);
+  --text-tertiary:  oklch(0.45 0.012 260);
+
+  /* ── GRADE: good  (≤30 µg/m³)  청록 H=148 ─────────────── */
+  --grade-good-primary:     oklch(0.72 0.165 148);
+  --grade-good-surface:     oklch(0.19 0.042 148);
+  --grade-good-surface-dim: oklch(0.15 0.030 148);
+  --grade-good-text:        oklch(0.88 0.088 148);
+  --grade-good-text-dim:    oklch(0.60 0.068 148);
+  --grade-good-border:      oklch(0.72 0.165 148 / 0.35);
+  --grade-good-glow:
+    radial-gradient(ellipse at 20% 20%, oklch(0.72 0.165 148 / 0.20) 0%, transparent 65%);
+
+  /* ── GRADE: moderate  (31–80 µg/m³)  황색 H=88 ────────── */
+  --grade-moderate-primary:     oklch(0.82 0.175 88);
+  --grade-moderate-surface:     oklch(0.19 0.040 88);
+  --grade-moderate-surface-dim: oklch(0.15 0.028 85);
+  --grade-moderate-text:        oklch(0.90 0.095 88);
+  --grade-moderate-text-dim:    oklch(0.63 0.072 86);
+  --grade-moderate-border:      oklch(0.82 0.175 88 / 0.35);
+  --grade-moderate-glow:
+    radial-gradient(ellipse at 20% 20%, oklch(0.82 0.175 88 / 0.20) 0%, transparent 65%);
+
+  /* ── GRADE: bad  (81–150 µg/m³)  오렌지 H=42 ─────────── */
+  --grade-bad-primary:     oklch(0.70 0.215 42);
+  --grade-bad-surface:     oklch(0.19 0.048 42);
+  --grade-bad-surface-dim: oklch(0.15 0.034 40);
+  --grade-bad-text:        oklch(0.87 0.108 42);
+  --grade-bad-text-dim:    oklch(0.58 0.088 40);
+  --grade-bad-border:      oklch(0.70 0.215 42 / 0.38);
+  --grade-bad-glow:
+    radial-gradient(ellipse at 20% 20%, oklch(0.70 0.215 42 / 0.22) 0%, transparent 65%);
+
+  /* ── GRADE: very_bad  (>150 µg/m³)  적색 H=18 ────────── */
+  --grade-very-bad-primary:     oklch(0.58 0.230 18);
+  --grade-very-bad-surface:     oklch(0.18 0.055 18);
+  --grade-very-bad-surface-dim: oklch(0.14 0.040 16);
+  --grade-very-bad-text:        oklch(0.85 0.118 18);
+  --grade-very-bad-text-dim:    oklch(0.52 0.098 16);
+  --grade-very-bad-border:      oklch(0.58 0.230 18 / 0.40);
+  --grade-very-bad-glow:
+    radial-gradient(ellipse at 20% 20%, oklch(0.58 0.230 18 / 0.25) 0%, transparent 65%);
+
+  /* ── STATUS: unavailable / null  (청회 H=260) ─────────── */
+  --status-unavailable-primary:  oklch(0.50 0.010 260);
+  --status-unavailable-surface:  oklch(0.17 0.012 260);
+  --status-unavailable-text:     oklch(0.60 0.010 260);
+  --status-unavailable-border:   oklch(0.50 0.010 260 / 0.30);
+
+  /* ── VERDICT  (grade 토큰 재사용, 의미 단위 분리) ─────── */
+  --verdict-safe-color:         var(--grade-good-primary);
+  --verdict-safe-text:          var(--grade-good-text);
+  --verdict-caution-color:      var(--grade-moderate-primary);
+  --verdict-caution-text:       var(--grade-moderate-text);
+  --verdict-avoid-color:        var(--grade-bad-primary);
+  --verdict-avoid-text:         var(--grade-bad-text);
+  --verdict-avoid-severe-color: var(--grade-very-bad-primary);
+  --verdict-avoid-severe-text:  var(--grade-very-bad-text);
+
+  /* ── PM2.5 임계값 (server.js gradeFromPM25 와 동기화) ─── */
+  --threshold-good:     30;
+  --threshold-moderate: 80;
+  --threshold-bad:      150;
+
+  /* ── 반경 / 전환 ─────────────────────────────────────── */
+  --radius-sm: 6px;   --radius-md: 12px;
+  --radius-lg: 20px;  --radius-xl: 28px;
+  --transition-fast: 150ms ease-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 400ms ease-in-out;
+}
+
+/* ── data-grade 셀렉터 — JS는 grade 문자열을 data-grade에 직접 쓴다 ── */
+
+[data-grade="good"] {
+  --g-primary:     var(--grade-good-primary);
+  --g-surface:     var(--grade-good-surface);
+  --g-surface-dim: var(--grade-good-surface-dim);
+  --g-text:        var(--grade-good-text);
+  --g-text-dim:    var(--grade-good-text-dim);
+  --g-border:      var(--grade-good-border);
+  --g-glow:        var(--grade-good-glow);
+}
+
+[data-grade="moderate"] {
+  --g-primary:     var(--grade-moderate-primary);
+  --g-surface:     var(--grade-moderate-surface);
+  --g-surface-dim: var(--grade-moderate-surface-dim);
+  --g-text:        var(--grade-moderate-text);
+  --g-text-dim:    var(--grade-moderate-text-dim);
+  --g-border:      var(--grade-moderate-border);
+  --g-glow:        var(--grade-moderate-glow);
+}
+
+[data-grade="bad"] {
+  --g-primary:     var(--grade-bad-primary);
+  --g-surface:     var(--grade-bad-surface);
+  --g-surface-dim: var(--grade-bad-surface-dim);
+  --g-text:        var(--grade-bad-text);
+  --g-text-dim:    var(--grade-bad-text-dim);
+  --g-border:      var(--grade-bad-border);
+  --g-glow:        var(--grade-bad-glow);
+}
+
+[data-grade="very_bad"] {
+  --g-primary:     var(--grade-very-bad-primary);
+  --g-surface:     var(--grade-very-bad-surface);
+  --g-surface-dim: var(--grade-very-bad-surface-dim);
+  --g-text:        var(--grade-very-bad-text);
+  --g-text-dim:    var(--grade-very-bad-text-dim);
+  --g-border:      var(--grade-very-bad-border);
+  --g-glow:        var(--grade-very-bad-glow);
+}
+
+[data-grade="unavailable"],
+[data-grade=""] {
+  --g-primary:     var(--status-unavailable-primary);
+  --g-surface:     var(--status-unavailable-surface);
+  --g-surface-dim: var(--status-unavailable-surface);
+  --g-text:        var(--status-unavailable-text);
+  --g-text-dim:    var(--status-unavailable-text);
+  --g-border:      var(--status-unavailable-border);
+  --g-glow:        none;
+}
